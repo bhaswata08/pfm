@@ -27,7 +27,7 @@ Add to flake.nix.
 pfm.url = "github:bhaswata08/pfm";
 ```
 
-Add pfm to `envrionement.systemPackages`
+Add pfm to `environment.systemPackages`
 
 ```nix
 {
