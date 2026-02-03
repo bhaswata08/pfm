@@ -1,0 +1,13 @@
+[package]
+name = "pfm"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhow = "1.0.100"
+clap = { version = "4.5.56", features = ["derive"] }
+clap_complete = "4.5.65"
+colored = "3.1.1"
+dirs = "6.0.0"
+serde = { version = "1.0.228", features = ["derive"] }
+serde_json = "1.0.149"
