@@ -35,7 +35,7 @@ Add pfm to `envrionement.systemPackages`
   ...
 }: {
   environment.systemPackages = [
-    inputs.nix.packages.${pkgs.stdenv.hostPlatform.system}.default
+    inputs.pfm.packages.${pkgs.stdenv.hostPlatform.system}.default
   ];
 }
 ```
