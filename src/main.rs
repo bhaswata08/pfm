@@ -1,6 +1,6 @@
 use std::io;
 use clap_complete::{generate, Shell};
-use clap::{Parser, Subcommand, CommandFactory};
+use clap::{CommandFactory, Parser, Subcommand};
 use colored::Colorize;
 use anyhow::{Context, Result};
 
@@ -15,6 +15,7 @@ use ssh::SshTunnel;
 #[derive(Parser)]
 #[command(name = "pfm")]
 #[command(about = "Port forward manager")]
+#[command(version)]
 struct Cli {
     #[command(subcommand)]
     command: Commands,
@@ -51,7 +52,7 @@ enum Commands {
         /// Shell to generate completions for
         #[arg(value_enum)]
         shell: Shell,
-    }
+    },
 }
 
 
