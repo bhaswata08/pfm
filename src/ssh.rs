@@ -18,7 +18,6 @@ impl SshTunnel {
             .arg("-N")
             .arg("-L")
             .arg(&forward_arg)
-            .arg("-o")
             .arg(host)
             .stdin(Stdio::null())   
             .stdout(Stdio::null()) 
