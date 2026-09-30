@@ -11,9 +11,9 @@ pub struct PortForward {
     pub pid: Option<u32>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct Config {
-    pub forwards: HashMap<String, PortForward>
+    pub forwards: HashMap<String, PortForward>,
 }
 
 impl Config {
@@ -39,16 +39,24 @@ impl Config {
     pub fn save(&self) -> Result<()> {
         let config_path = Self::config_path()?;
 
-        if let Some(parent) = config_path.parent() {
-            fs::create_dir_all(parent)
-                .context("Failed to create config directory")?;
-        }
+        let parent = config_path
+            .parent()
+            .context("Config path has no parent directory")?;
+        fs::create_dir_all(parent)
+            .context("Failed to create config directory")?;
 
         let contents = serde_json::to_string_pretty(self)
             .context("Failed to serialize config")?;
 
-        fs::write(&config_path, contents)
-            .context("Failed to write config file")?;
+        let temp_path = parent.join(format!(".config.json.tmp.{}", std::process::id()));
+        fs::write(&temp_path, contents)
+            .context("Failed to write temporary config file")?;
+
+        if let Err(e) = fs::rename(&temp_path, &config_path) {
+            let _ = fs::remove_file(&temp_path);
+            return Err(e).context("Failed to atomically replace config file");
+        }
+
         Ok(())
     }
 
@@ -73,15 +81,6 @@ impl Config {
     pub fn get_forward_by_index(&self, index: usize) -> Option<&PortForward> {
         self.get_sorted_forwards().get(index).copied()
     }
-
-    // pub fn remove_forward_by_index(&mut self, index: usize) -> Option<PortForward> {
-    //     let id = self.get_forward_by_index(index)?.id.clone();
-    //     self.remove_forward(&id)
-    // }
-
-    // pub fn get_forward(&self, id: &str) -> Option<&PortForward> {
-    //     self.forwards.get(id)
-    // }
 
     pub fn remove_forward(&mut self, id: &str) -> Option<PortForward> {
         self.forwards.remove(id)
